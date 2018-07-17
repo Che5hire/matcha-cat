@@ -62,7 +62,6 @@ class Fun():
 				for tag in ortags:
 					tags.remove(tag)
 				tags += [random.choice(ortags).replace('~', '')]
-			print(tags)
 			tags = ' '.join(tags)
 			tags += ' ' + cfg.get('booru', 'Tags')
 			urlinput = 'https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1&limit={}&tags={}'.format(imglimit, tags)
