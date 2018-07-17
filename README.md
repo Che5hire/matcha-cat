@@ -1,2 +1,2 @@
 # Matcha Cat
-More detailed documentation later.
+This is a bot made exclusively for Che5hire's discord server.
