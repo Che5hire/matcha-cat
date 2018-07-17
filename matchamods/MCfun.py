@@ -87,7 +87,7 @@ class Fun():
 				if not img['file_url'].endswith('.webm'):
 					embed.set_image(url=img['file_url'])
 				embed.set_image(url=img['file_url'])
-				embed.set_author(name='ID: {}'.format(img['id']), icon_url='https://gelbooru.com/favicon.png')
+				embed.set_author(name='ID: {}'.format(img['id']), icon_url='https://gelbooru.com/favicon.png', url='https://gelbooru.com/index.php?page=post&s=view&id={}'.format(img['id']))
 				if img['file_url'].endswith('.webm'):
 					await ctx.send(embed=embed)
 					await ctx.send(img['file_url']) 
