@@ -48,6 +48,7 @@ color __COLOR__
 	Changes your name's colour, check matchacat for a list of colours..''' #This was phased out in favor for the default help command.
 cfg = configparser.ConfigParser()
 cfg.read('matchacat/matchacat.ini')
+OwnerID = int(cfg.get('bot', 'OwnerID'))
 #reddit = praw.Reddit(client_id = cfg.get('reddit', 'RedditClientID'), client_secret = cfg.get('reddit', 'RedditClientSecret'), username = cfg.get('reddit', 'RedditUsername'), password = cfg.get('reddit', 'RedditPassword'), useragent = 'matchacat v0.4 by Che5hire')
 rcon = mcrcon.MCRcon()
 #Client = discord.Client()
@@ -82,7 +83,7 @@ async def on_message(message):
 	await bot.process_commands(message)
 @bot.command(hidden=True)
 async def mods(ctx):
-	if ctx.message.author.id == 183304706624454656:
+	if ctx.message.author.id == OwnerID:
 		await reloadmods(modsloaded)
 		await ctx.send('Done')
 	else:
