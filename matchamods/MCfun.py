@@ -47,10 +47,23 @@ class Fun():
 	@commands.command(description='Gives a random image based on the tags you enter. Using a sort metatag will give you the first result that sort tag would give you (example: `sort:score` gives you the highest scoring result).')
 	async def gelbooru(self, ctx,*tags):
 		if ctx.message.channel.is_nsfw():
+			tags = list(tags)
 			imglimit = '100'#How many images will be pulled up, 100 is the max Gelbooru allows.
+			tagno = 0
+			ortags = []
+			for tag in tags:
+				if tag.startswith('~'):
+					ortags += [tag]
+				elif tag.find('top:') != -1:
+					tags[tagno] = tag.replace('top:', 'sort:')
+					imglimit = '1'#This makes sure the top result is always picked it's also pointless to pull more if the top is what we want.
+				tagno += 1
+			else:
+				for tag in ortags:
+					tags.remove(tag)
+				tags += [random.choice(ortags).replace('~', '')]
+			print(tags)
 			tags = ' '.join(tags)
-			if tags.find('sort:') != -1:
-				imglimit = '1'#This makes sure the top result is always picked it's also pointless to pull more if the top is what we want.
 			tags += ' ' + cfg.get('booru', 'Tags')
 			urlinput = 'https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1&limit={}&tags={}'.format(imglimit, tags)
 			webURL = urllib.request.urlopen(urlinput)
@@ -101,19 +114,5 @@ class Fun():
 					await ctx.send('The role you have entered does not exist.')
 				else:
 					await ctx.send('You have been added to the {} role.'.format(role))
-	#~ @commands.command()
-	#~ async def rep(self, ctx, member:discord.Member=None):
-		#~ if member == None:
-			#~ member = ctx.message.author
-		#~ displayrep = 0
-		#~ with open('matchacat/matchacat.json', 'r') as f:
-			#~ matchacatJSON = json.load(f)
-		#~ try:
-			#~ displayrep = matchacatJSON['users'][str(member.id)].get('rep', 0)
-		#~ except:
-			#~ e = sys.exc_info()[0]
-			#~ print(e)
-		#~ outputstr = '{} has {}💮'.format(member.name, str(displayrep))
-		#~ await ctx.send(outputstr)
 def setup(bot):
 	bot.add_cog(Fun(bot))
