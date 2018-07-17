@@ -49,19 +49,18 @@ class Fun():
 		if ctx.message.channel.is_nsfw():
 			tags = list(tags)
 			imglimit = '100'#How many images will be pulled up, 100 is the max Gelbooru allows.
-			tagno = 0
 			ortags = []
 			for tag in tags:
 				if tag.startswith('~'):
 					ortags += [tag]
 				elif tag.find('top:') != -1:
-					tags[tagno] = tag.replace('top:', 'sort:')
+					tags[tags.index(tag)] = tag.replace('top:', 'sort:')
 					imglimit = '1'#This makes sure the top result is always picked it's also pointless to pull more if the top is what we want.
-				tagno += 1
 			else:
-				for tag in ortags:
-					tags.remove(tag)
-				tags += [random.choice(ortags).replace('~', '')]
+				if len(ortags) != 0:
+					for tag in ortags:
+						tags.remove(tag)
+					tags += [random.choice(ortags).replace('~', '')]
 			tags = ' '.join(tags)
 			tags += ' ' + cfg.get('booru', 'Tags')
 			urlinput = 'https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1&limit={}&tags={}'.format(imglimit, tags)
