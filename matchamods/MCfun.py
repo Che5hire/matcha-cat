@@ -44,7 +44,7 @@ class Fun():
 			except:
 				e = sys.exc_info()[0]
 				print(e)
-	@commands.command(description='Gives a random image based on the tags you enter. Using a sort metatag will give you the first result that sort tag would give you (example: `sort:score` gives you the highest scoring result).')
+	@commands.command(description="Gives a random image based on the tags you enter. Typing 'top:' etc will give you the result that's the highest for that quality (example: 'top:score' gives you the highest scoring post). Putting a '~' behind a tag will make Matcha Cat randomly pick between those tags. This command can only be used in NSFW channels.")
 	async def gelbooru(self, ctx,*tags):
 		if ctx.message.channel.is_nsfw():
 			tags = list(tags)
