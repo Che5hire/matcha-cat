@@ -78,7 +78,7 @@ async def on_ready():
 @bot.event
 async def on_message(message):
 	if (message.content.lower().find('shadman') != -1) and (message.content.lower().find('>shadman') == -1):
-		await bot.send_message(message.channel, '```css\n>shadman```')
+		await message.channel.send(message.channel, '```css\n>shadman```')
 			
 	await bot.process_commands(message)
 @bot.command(hidden=True)
