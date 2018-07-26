@@ -80,7 +80,10 @@ async def on_message(message):
 	if (message.content.lower().find('shadman') != -1) and (message.content.lower().find('>shadman') == -1):
 		await message.channel.send(message.channel, '```css\n>shadman```')
 			
-	await bot.process_commands(message)
+	if (not message.author.bot) and (str(message.channel).startswith('Direct Message with')):
+		await message.channel.send('Commands via DM are currently not supported.')
+	else:
+		await bot.process_commands(message)
 @bot.command(hidden=True)
 async def mods(ctx):
 	if ctx.message.author.id == OwnerID:
