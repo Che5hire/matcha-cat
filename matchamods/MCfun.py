@@ -84,13 +84,62 @@ class Fun():
 				embed.add_field(name='Rating', value=imgrating, inline=True)
 				if not img['file_url'].endswith('.webm'):
 					embed.set_image(url=img['file_url'])
-				embed.set_image(url=img['file_url'])
 				embed.set_author(name='ID: {}'.format(img['id']), icon_url='https://gelbooru.com/favicon.png', url='https://gelbooru.com/index.php?page=post&s=view&id={}'.format(img['id']))
 				if img['file_url'].endswith('.webm'):
 					await ctx.send(embed=embed)
 					await ctx.send(img['file_url']) 
 				else:
 					embed.set_image(url=img['file_url'])
+					await ctx.send(embed=embed)
+		else: 
+			await ctx.send('This command cannot be used in SFW channels.')
+	@commands.command(aliases=['r34'], description='Gives a random image based on the tags you enter. Using a sort metatag will give you the first result that sort tag would give you (example: `sort:score` gives you the highest scoring result).')
+	async def rule34(self, ctx,*tags):
+		if ctx.message.channel.is_nsfw():
+			tags = list(tags)
+			imglimit = '100'#How many images will be pulled up, 100 is the max Gelbooru allows.
+			ortags = []
+			for tag in tags:
+				if tag.startswith('~'):
+					ortags += [tag]
+				elif tag.find('top:') != -1:
+					tags[tags.index(tag)] = tag.replace('top:', 'sort:')
+					imglimit = '1'#This makes sure the top result is always picked it's also pointless to pull more if the top is what we want.
+			else:
+				if len(ortags) != 0:
+					for tag in ortags:
+						tags.remove(tag)
+					tags += [random.choice(ortags).replace('~', '')]
+			tags = ' '.join(tags)
+			tags += ' ' + cfg.get('booru', 'Tags')
+			urlinput = 'https://rule34.xxx/index.php?page=dapi&s=post&q=index&json=1&limit={}&tags={}'.format(imglimit, tags)
+			webURL = urllib.request.urlopen(urlinput)
+			data = webURL.read()
+			#imgJSON = json.loads(data.decode(encoding))
+			try:
+				img = random.choice(json.loads(data.decode("utf-8")))
+			except json.decoder.JSONDecodeError:
+				await ctx.send('Could not find any images with the tags: `' + tags +'`')
+			else:
+				linktoimage = 'https://rule34.xxx/images/{}/{}'.format(img['directory'],img['image'])#Gelbooru puts the link to an image in the JSON, rule34.xxx does not, thankfully you can link to it if you have the directory and image name which it does provide.
+				embed = discord.Embed(colour=discord.Colour.green())
+				embed.add_field(name='Score', value=img['score'], inline=True)
+				imgrating = ''
+				if img['rating'] == 'safe':
+					imgrating = 'Safe🍬'
+				if img['rating'] == 'questionable':
+					imgrating = 'Questionable🌶'
+				if img['rating'] == 'explicit':
+					imgrating = 'Explicit🔥'
+				embed.add_field(name='Rating', value=imgrating, inline=True)
+				if not linktoimage.endswith('.webm'):
+					embed.set_image(url=linktoimage)
+				embed.set_author(name='ID: {}'.format(img['id']), icon_url='https://rule34.xxx/favicon.png', url='https://rule34.xxx/index.php?page=post&s=view&id={}'.format(img['id']))
+				if linktoimage.endswith('.webm'):
+					await ctx.send(embed=embed)
+					await ctx.send(linktoimage) 
+				else:
+					embed.set_image(url=linktoimage)
 					await ctx.send(embed=embed)
 		else: 
 			await ctx.send('This command cannot be used in SFW channels.')
