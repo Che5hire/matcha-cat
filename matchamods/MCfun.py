@@ -64,7 +64,8 @@ class Fun():
 			tags = ' '.join(tags)
 			tags += ' ' + cfg.get('booru', 'Tags')
 			urlinput = 'https://gelbooru.com/index.php?page=dapi&s=post&q=index&json=1&limit={}&tags={}'.format(imglimit, tags)
-			webURL = urllib.request.urlopen(urlinput)
+			req = urllib.request.Request(urlinput,data=None, headers= {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64; rv:64.0) Gecko/20100101 Firefox/64.0'})#Spoofs user agent as Gelbooru blocks urllib's default
+			webURL = urllib.request.urlopen(req)
 			data = webURL.read()
 			#imgJSON = json.loads(data.decode(encoding))
 			try:
