@@ -4,7 +4,7 @@ from discord.ext import commands
 cfg = configparser.ConfigParser()
 cfg.read('matchacat/matchacat.ini')
 staffroleID = cfg.get('bot', 'StaffID')
-class Admin():
+class Admin(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 	@commands.command(description='Adds a tag for people to use.', hidden=True)

@@ -2,7 +2,7 @@
 import random, json, requests, discord, pandas
 from discord.ext import commands	
 #print('WCfun loaded')
-class Pokemon():
+class Pokemon(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot		
 	@commands.command(description="Displays a shiny pokemon sprite.")

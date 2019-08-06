@@ -3,7 +3,7 @@ import random, json, discord, urllib.request, configparser
 from discord.ext import commands
 cfg = configparser.ConfigParser()
 cfg.read('matchacat/matchacat.ini')
-class Fun():
+class Fun(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 	#Commands for tags which are 

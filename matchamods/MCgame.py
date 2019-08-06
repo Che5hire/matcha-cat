@@ -9,7 +9,7 @@ from discord.ext import commands
 #bnetToken = cfg.get('blizzard', 'BotToken')
 #connection = BattleNetConnection(apikey=bnetToken)
 #client = conn.client()
-class Gaming():
+class Gaming(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
 		self.lobbies = {}#This should be filled with DICTIONARIES ONLY
