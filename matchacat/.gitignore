@@ -1,3 +1,4 @@
 #Config files
 *.json
 *.ini
+*.bak

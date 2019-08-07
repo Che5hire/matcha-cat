@@ -1,18 +1,17 @@
 #Commands for the matchmaking channel.
-from matchamods.utils import mcutil
 import random, json, sys, discord, configparser
 from steam import SteamID
 from discord.ext import commands
-#from bnet.connection import BattleNetConnection
-#cfg = configparser.ConfigParser()
-#cfg.read('matchacat/matchacat.ini')
-#bnetToken = cfg.get('blizzard', 'BotToken')
-#connection = BattleNetConnection(apikey=bnetToken)
-#client = conn.client()
+
+cfg = configparser.ConfigParser()
+cfg.read('matchacat/matchacat.ini')
+
+if cfg.getboolean("minecraft", "WhiteList"):
+	from matchamods.utils import mcutil
+
 class Gaming(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
-		self.lobbies = {}#This should be filled with DICTIONARIES ONLY
 		self.services = ['steam', 'minecraft', 'showdown']#the services our bot supports.
 	@commands.command(description='Adds a username so people can easily see it.', pass_context=True)
 	async def adduser(self, ctx, service=None, username=None):
@@ -54,7 +53,7 @@ class Gaming(commands.Cog):
 					print(e)
 				else:
 					await ctx.send('Successfully added')
-		elif service == self.services[1]: #minecraft
+		elif (service == self.services[1]) and cfg.getboolean("minecraft", "WhiteList"): #minecraft
 			if mcutil.whitelist(ctx.message.author, username):#This whitelists the user to our minecraft server
 				await ctx.send('You were whitelisted to our server.')
 			else:
@@ -70,26 +69,6 @@ class Gaming(commands.Cog):
 			with open('matchacat/matchacat.json', 'w') as f:
 				f.write(json.dumps(matchacatJSON, sort_keys=True, indent=2, separators=(',', ': ')))
 				await ctx.send('Added')
-		#~ elif service == self.services[3]:#Blizzard
-			#~ testint = False
-			#~ if username.count('#') == 1:
-				#~ try:
-					#~ int(username[(username.find('#') + 1):])
-					#~ testint = True
-				#~ except:
-					#~ await ctx.send('The ID at the end must be a number.')
-					#~ testint = False
-				#~ if testint:
-					#~ with open('matchacat/matchacat.json', 'r') as f:
-						#~ matchacatJSON = json.load(f)
-						#~ if matchacatJSON['users'].get(discordID, None) == None:
-							#~ matchacatJSON['users'].update({discordID:{'bnet':username}})
-						#~ else:
-							#~ matchacatJSON['users'][discordID]['bnet'] = username
-					#~ with open('matchacat/matchacat.json', 'w') as f:
-						#~ f.write(json.dumps(matchacatJSON, sort_keys=True, indent=2, separators=(',', ': ')))
-			#~ else:
-				#~ await ctx.send('This is not a correctly formatted battlenet/blizzard username. Remember to add the delimiter (The # with numbers at the end).')
 			
 	@commands.command(description='Gives instructions on how to use a service and what the service is.')
 	async def service(self, ctx, service=None):
@@ -97,10 +76,10 @@ class Gaming(commands.Cog):
 			await ctx.send("Usage $service service\nAvailible services: " + ', '.join(self.services))
 		elif service == self.services[0]:#Steam
 			await ctx.send("This is your steam account. Due to the freedom you're given with nicknames you will need to enter the url to your steam account or steamID in place of a username when using `$adduser`")
+		elif (service == self.services[1]) and not cfg.getboolean("minecraft", "WhiteList"):#If Minecraft support is disabled.
+			await ctx.send("Minecraft support is disabled.")
 		elif service == self.services[1]:#Minecraft
 			await ctx.send("Adding your Minecraft username will automatically add you to our Minecraft server's whitelist.")
-		elif service == self.services[3]:#Blizzard
-			await ctx.send("Your battletag must be `CaseSensitiveUsername#delimiter` e.g. `Che5hire#1396`.")
 	@commands.command(description="Tells you the user's other usernames. The reverse of `whois`", pass_context=True, aliases=['othernames','aliases','usernames'])
 	async def names(self, ctx, member: discord.Member=None, service=None):
 		if member == None:
@@ -164,7 +143,7 @@ class Gaming(commands.Cog):
 						break
 				else:
 					await ctx.send('No Discord user found.')
-			elif service == self.services[1]:#Minecraft
+			elif (service == self.services[1]) and cfg.getboolean("minecraft", "WhiteList"):#Minecraft
 				discordID = mcutil.rsearch(username)
 				if discordID != None:
 					await ctx.send('<@{}>'.format(discordID))
@@ -181,9 +160,5 @@ class Gaming(commands.Cog):
 						break
 				else:
 					await ctx.send('No Discord user found.')
-	#~ @commands.command(description='''''')
-	#~ async def lobby(self, ctx, service=None, *args):
-		#~ if service == None:
-			#~ ctx.send('Usage ')
 def setup(bot):
 	bot.add_cog(Gaming(bot))

@@ -8,7 +8,7 @@
 import discord
 from discord.ext.commands import Bot
 from discord.ext import commands
-import mcrcon, asyncio, time, random, json, sys, datetime, configparser, os#, praw
+import asyncio, time, random, json, sys, datetime, configparser, os#, praw
 modsloaded=[]
 abouttext = '''Bot made by Che5hire#4179 (steamcommunity.com/id/che5hire on steam)
 Version 0.5 (Alpha) "Is this the same bot? It doesn't even use the same library or anything."
@@ -17,44 +17,15 @@ Expect matchmaking and tournament features in the near future
 
 By using any of the commands or services supplied by this bot and related servers you're agreeing to the terms and conditions here: https://discordapp.com/developers/docs/legal
 You also agree and acknowledge that any information supplied to the bot may be stored and used for services or functions supplied by any other servers I host. (I will not sell this information to 3rd parties.)'''
-
-'''helptext = \'''(By using any of the commands below (besides $help and $about) you are agreeing to any terms and conditions I list in the $about command. Unless stated otherwise assume the command starts with a $)
-help [-c]
-	PMs you this message, -c will print this message to the channel you typed it in.
-
-about
-	Information about the bot itself and not the commands such as: Version number, author, etc.
-
-adduser __USERNAME__
-	Associates a username from pokemon showdown to your discord account for the $whois command. Keep in mind that entering this command will overwrite your previous username. This will be used for future commands and more websites will come soon.
-
-whitelist [-r] __YOURMINECRAFTUSERNAME__
-	Adds your username to our server's whitelist, adding -r without specifying a username will remove the name your registered.
-
-whois [-OPTIONS] __NAME__
-	Prints the discord user's minecraft name if it has been registered using 'whitelist', -mc lets you find a discord name using their Minecraft username
-	-mc: finds a discord username using their minecraft username.
-	-sd: finds a discord username using their showdown username.
-	
-sprite __POKEMON__
-	Posts a sprite of a shiny pokemon on the channel using the sprite library
-	
-rep [DISCORDNAME]
-	Tells you how many 💮 reactions have been added to a users posts.
-	
-colour __COLOUR__
-OR
-color __COLOR__
-	Changes your name's colour, check matchacat for a list of colours..''' #This was phased out in favor for the default help command.
 cfg = configparser.ConfigParser()
 cfg.read('matchacat/matchacat.ini')
-OwnerID = int(cfg.get('bot', 'OwnerID'))
-#reddit = praw.Reddit(client_id = cfg.get('reddit', 'RedditClientID'), client_secret = cfg.get('reddit', 'RedditClientSecret'), username = cfg.get('reddit', 'RedditUsername'), password = cfg.get('reddit', 'RedditPassword'), useragent = 'matchacat v0.4 by Che5hire')
-rcon = mcrcon.MCRcon()
-#Client = discord.Client()
-bot = commands.Bot(command_prefix = '$', description=abouttext)
 
-#async def sec_clock():
+if cfg.getboolean("minecraft", "WhiteList"):
+	import mcrcon
+	rcon = mcrcon.MCRcon()
+
+OwnerID = int(cfg.get('bot', 'OwnerID'))
+bot = commands.Bot(command_prefix = '$', description=abouttext)
 
 async def display_time():
 	#This function is a loop that will update 'playing' to the server's current time every second.
